@@ -38,4 +38,28 @@ public class PaymentEventPublisher {
         kafkaTemplate.send(topic, payment.getId().toString(), json);
         log.info("PAYMENT_CREATED published for payment {}", payment.getId());
     }
+
+    public void publishCompleted(Payment payment) {
+        publish(payment, PaymentEventType.PAYMENT_COMPLETED);
+    }
+
+    public void publishFailed(Payment payment) {
+        publish(payment, PaymentEventType.PAYMENT_FAILED);
+    }
+
+    private void publish(Payment payment, PaymentEventType type) {
+        PaymentEvent event = new PaymentEvent(
+            type,
+            payment.getId(),
+            payment.getUserId(),
+            payment.getAmount(),
+            payment.getCurrency(),
+            payment.getMethod(),
+            payment.getFailureReason(),
+            Instant.now()
+        );
+        String json = objectMapper.writeValueAsString(event);
+        kafkaTemplate.send(topic, payment.getId().toString(), json);
+        log.info("{} published for payment {}", type, payment.getId());
+    }
 }

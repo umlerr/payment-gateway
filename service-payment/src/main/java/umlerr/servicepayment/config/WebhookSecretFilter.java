@@ -12,28 +12,27 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 @Component
-public class ApiKeyFilter extends OncePerRequestFilter {
+public class WebhookSecretFilter extends OncePerRequestFilter {
 
-    private final String apiKey;
+    private final String webhookSecret;
 
-    public ApiKeyFilter(@Value("${app.api-key}") String apiKey) {
-        this.apiKey = apiKey;
+    public WebhookSecretFilter(@Value("${app.webhook-secret}") String webhookSecret) {
+        this.webhookSecret = webhookSecret;
     }
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        String path = request.getServletPath();
-        return path.startsWith("/webhooks/");
+        return !request.getServletPath().startsWith("/webhooks/bank");
     }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, @NonNull HttpServletResponse response,
                                     @NonNull FilterChain filterChain) throws ServletException, IOException {
-        String provided = request.getHeader("X-Api-Key");
-        if (!apiKey.equals(provided)) {
+        String provided = request.getHeader("X-Webhook-Secret");
+        if (!webhookSecret.equals(provided)) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType("application/json");
-            response.getWriter().write("{\"code\":\"UNAUTHORIZED\",\"message\":\"invalid or missing api key\"}");
+            response.getWriter().write("{\"code\":\"UNAUTHORIZED\",\"message\":\"invalid or missing webhook secret\"}");
             return;
         }
         filterChain.doFilter(request, response);
