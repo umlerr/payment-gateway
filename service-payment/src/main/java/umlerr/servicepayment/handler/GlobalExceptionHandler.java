@@ -28,7 +28,8 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleValidation(MethodArgumentNotValidException e, ServletWebRequest request) {
+    public ResponseEntity<ErrorResponse> handleValidation(
+        MethodArgumentNotValidException e, ServletWebRequest request) {
         Map<String, String> details = new LinkedHashMap<>();
         e.getBindingResult().getFieldErrors()
             .forEach(error -> details.put(error.getField(), error.getDefaultMessage()));
