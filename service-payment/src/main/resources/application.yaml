@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: service-payment
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/payment_db}
+    username: ${DB_USER:postgres}
+    password: ${DB_PASSWORD:postgres}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog.yaml
+
+server:
+  port: 8080
+  servlet:
+    context-path: /api/payment/v1
+
+app:
+  api-key: ${API_KEY:payment-local-key}
+  webhook-secret: ${WEBHOOK_SECRET:bank-local-secret}
