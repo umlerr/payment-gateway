@@ -9,7 +9,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - pg_payment:/var/lib/postgresql/data
+      - pg_payment:/var/lib/postgresql
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U postgres -d payment_db" ]
       interval: 5s
@@ -26,7 +26,7 @@ services:
     ports:
       - "5433:5432"
     volumes:
-      - pg_notification:/var/lib/postgresql/data
+      - pg_notification:/var/lib/postgresql
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U postgres -d notification_db" ]
       interval: 5s
@@ -43,7 +43,7 @@ services:
     ports:
       - "5434:5432"
     volumes:
-      - pg_analytics:/var/lib/postgresql/data
+      - pg_analytics:/var/lib/postgresql
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U postgres -d analytics_db" ]
       interval: 5s
