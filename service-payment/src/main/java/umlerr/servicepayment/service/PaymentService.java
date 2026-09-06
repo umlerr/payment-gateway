@@ -8,6 +8,7 @@ import umlerr.servicepayment.dto.PaymentCreateResult;
 import umlerr.servicepayment.dto.PaymentResponse;
 import umlerr.servicepayment.enums.PaymentStatus;
 import umlerr.servicepayment.exception.NotFoundException;
+import umlerr.servicepayment.kafka.PaymentEventPublisher;
 import umlerr.servicepayment.model.Payment;
 import umlerr.servicepayment.repository.PaymentRepository;
 
@@ -19,6 +20,7 @@ import java.util.UUID;
 public class PaymentService {
 
     private final PaymentRepository paymentRepository;
+    private final PaymentEventPublisher paymentEventPublisher;
 
     public PaymentCreateResult create(String idempotencyKey, PaymentCreateRequest request) {
         var existing = paymentRepository.findByIdempotencyKey(idempotencyKey);
@@ -41,6 +43,7 @@ public class PaymentService {
 
         try {
             var saved = paymentRepository.save(payment);
+            paymentEventPublisher.publishCreated(saved);
             return new PaymentCreateResult(toResponse(saved), true);
         } catch (DataIntegrityViolationException e) {
             return paymentRepository.findByIdempotencyKey(idempotencyKey)

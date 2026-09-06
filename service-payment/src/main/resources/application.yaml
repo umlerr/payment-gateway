@@ -10,6 +10,11 @@ spring:
       ddl-auto: validate
   liquibase:
     change-log: classpath:db/changelog/db.changelog.yaml
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
 
 server:
   port: 8080
@@ -19,3 +24,4 @@ server:
 app:
   api-key: ${API_KEY:payment-local-key}
   webhook-secret: ${WEBHOOK_SECRET:bank-local-secret}
+  payment-topic: ${PAYMENT_TOPIC:payments.events.v1}
