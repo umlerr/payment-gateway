@@ -12,10 +12,6 @@
 
     <rule ref="category/java/bestpractices.xml">
         <exclude name="AvoidReassigningParameters"/>
-    </rule>
-
-    <rule ref="category/java/bestpractices.xml">
-        <exclude name="AvoidReassigningParameters"/>
         <exclude name="GuardLogStatement"/>
     </rule>
 </ruleset>
