@@ -1,3 +1,5 @@
 databaseChangeLog:
   - include:
       file: db/changelog/migration/V.1.0.0_1__ADD_PAYMENTS.sql
+  - include:
+      file: db/changelog/migration/V.1.0.0_2__ADD_STATUS_CONSTRAINTS.sql

@@ -3,11 +3,14 @@ package umlerr.servicepayment.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import umlerr.servicepayment.dto.BankWebhookRequest;
 import umlerr.servicepayment.dto.PaymentCreateRequest;
 import umlerr.servicepayment.dto.PaymentCreateResult;
 import umlerr.servicepayment.dto.PaymentResponse;
+import umlerr.servicepayment.enums.PaymentResult;
 import umlerr.servicepayment.enums.PaymentStatus;
 import umlerr.servicepayment.exception.NotFoundException;
+import umlerr.servicepayment.kafka.PaymentEventPublisher;
 import umlerr.servicepayment.model.Payment;
 import umlerr.servicepayment.repository.PaymentRepository;
 
@@ -19,6 +22,7 @@ import java.util.UUID;
 public class PaymentService {
 
     private final PaymentRepository paymentRepository;
+    private final PaymentEventPublisher paymentEventPublisher;
 
     public PaymentCreateResult create(String idempotencyKey, PaymentCreateRequest request) {
         var existing = paymentRepository.findByIdempotencyKey(idempotencyKey);
@@ -41,6 +45,7 @@ public class PaymentService {
 
         try {
             var saved = paymentRepository.save(payment);
+            paymentEventPublisher.publishCreated(saved);
             return new PaymentCreateResult(toResponse(saved), true);
         } catch (DataIntegrityViolationException e) {
             return paymentRepository.findByIdempotencyKey(idempotencyKey)
@@ -53,6 +58,30 @@ public class PaymentService {
         return paymentRepository.findById(id)
             .map(this::toResponse)
             .orElseThrow(() -> new NotFoundException("payment not found by id: " + id));
+    }
+
+    public void handleBankResult(UUID paymentId, BankWebhookRequest request) {
+        Payment payment = paymentRepository.findById(paymentId)
+            .orElseThrow(() -> new NotFoundException("payment not found by id: " + paymentId));
+
+        if (payment.getStatus() != PaymentStatus.PROCESSING) {
+            return;
+        }
+
+        PaymentStatus newStatus = request.getResult() == PaymentResult.COMPLETED
+            ? PaymentStatus.COMPLETED
+            : PaymentStatus.FAILED;
+
+        payment.setStatus(newStatus);
+        payment.setFailureReason(request.getReason());
+        payment.setUpdatedAt(LocalDateTime.now());
+        paymentRepository.save(payment);
+
+        if (newStatus == PaymentStatus.COMPLETED) {
+            paymentEventPublisher.publishCompleted(payment);
+        } else {
+            paymentEventPublisher.publishFailed(payment);
+        }
     }
 
     private PaymentResponse toResponse(Payment payment) {
