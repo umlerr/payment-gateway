@@ -1,31 +1,35 @@
-# Payment Gateway
+# payment-gateway
 
-Пет-проект: платёжный шлюз на микросервисах — создание платежа, статусная машина
-`CREATED → PROCESSING → COMPLETED/FAILED`, идемпотентность, вебхуки от банка и событийная
-интеграция через Kafka.
+Пет-проект: платежный шлюз на микросервисах. Платеж проходит статусы
+CREATED -> PROCESSING -> COMPLETED/FAILED, события уходят в Kafka.
 
-> Work in progress — финальная документация появится к концу дня.
+## Сервисы
 
-## Архитектура
-
-| Сервис | Порт | Контекст | Ответственность |
-|---|---|---|---|
-| service-payment | 8080 | /api/payment/v1 | создание платежа, идемпотентность, вебхук банка, статусы |
-| service-notification | 8081 | /api/notification/v1 | консюмер ивентов, мок-отправка уведомлений |
-| service-analytics | 8082 | /api/analytics/v1 | агрегация: суммы по статусам/методам, топ отправителей |
-
-Инфраструктура: Kafka (KRaft, без ZooKeeper) + PostgreSQL 18 x3 (database-per-service).
+| Сервис | Порт | Что делает |
+|---|---|---|
+| service-payment | 8080 | прием платежей, идемпотентность, вебхук банка |
+| service-notification | 8081 | читает события, рассылает уведомления |
+| service-analytics | 8082 | статистика по платежам |
 
 ## Стек
 
-- Java 25 LTS
-- Spring Boot 4.1 (Spring Framework 7, Jakarta EE 11, Jackson 3)
-- Gradle 9.7 (multi-project монорепо, toolchains)
-- PostgreSQL 18 + Liquibase
-- Apache Kafka 4.0 (KRaft)
-- Lombok, springdoc-openapi v3
+- Java 25, Spring Boot 4.1
+- Gradle 9.7, Liquibase, Lombok
+- PostgreSQL 18, по базе на сервис
+- Kafka 4.0 (KRaft, без ZooKeeper)
 
-## Git-конвенция
+## Запуск
 
-- Коммиты: `feat:` / `fix:` / `chore:` / `docs:` / `infra:` / `test:` / `refactor:` — английский, императив
-- Ветки: `feature/<slug>`, `fix/<slug>`, `chore/<slug>` от `main`, слияние через PR
+Нужен Docker, JDK подтянется сам через gradle toolchains.
+
+```
+docker compose up -d
+./gradlew :service-payment:bootRun
+```
+
+kafka-ui на localhost:8088
+
+## Разработка
+
+- сборка и линтеры: `./gradlew build`
+- ветки: feature/*, fix/*, chore/* от master, слияние через PR
