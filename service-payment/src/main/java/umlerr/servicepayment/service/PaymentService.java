@@ -2,7 +2,9 @@ package umlerr.servicepayment.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import umlerr.servicepayment.dto.PaymentCreateRequest;
 import umlerr.servicepayment.dto.PaymentCreateResult;
 import umlerr.servicepayment.dto.PaymentResponse;
@@ -11,6 +13,7 @@ import umlerr.servicepayment.model.Payment;
 import umlerr.servicepayment.repository.PaymentRepository;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -45,6 +48,12 @@ public class PaymentService {
                 .map(p -> new PaymentCreateResult(toResponse(p), false))
                 .orElseThrow(() -> new IllegalStateException("payment not found after idempotency conflict"));
         }
+    }
+
+    public PaymentResponse get(UUID id) {
+        return paymentRepository.findById(id)
+            .map(this::toResponse)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "payment not found"));
     }
 
     private PaymentResponse toResponse(Payment payment) {
