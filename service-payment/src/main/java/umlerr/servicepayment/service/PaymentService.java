@@ -2,13 +2,12 @@ package umlerr.servicepayment.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 import umlerr.servicepayment.dto.PaymentCreateRequest;
 import umlerr.servicepayment.dto.PaymentCreateResult;
 import umlerr.servicepayment.dto.PaymentResponse;
 import umlerr.servicepayment.enums.PaymentStatus;
+import umlerr.servicepayment.exception.NotFoundException;
 import umlerr.servicepayment.model.Payment;
 import umlerr.servicepayment.repository.PaymentRepository;
 
@@ -53,7 +52,7 @@ public class PaymentService {
     public PaymentResponse get(UUID id) {
         return paymentRepository.findById(id)
             .map(this::toResponse)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "payment not found"));
+            .orElseThrow(() -> new NotFoundException("payment not found by id: " + id));
     }
 
     private PaymentResponse toResponse(Payment payment) {
