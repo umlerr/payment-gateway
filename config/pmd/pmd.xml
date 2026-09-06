@@ -5,11 +5,6 @@
          xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd">
     <description>Правила PMD для payment-gateway</description>
 
-    <rule ref="category/java/errorprone.xml">
-        <exclude name="AvoidDuplicateLiterals"/>
-        <exclude name="BeanMembersShouldSerialize"/>
-    </rule>
-
     <rule ref="category/java/bestpractices.xml">
         <exclude name="AvoidReassigningParameters"/>
         <exclude name="GuardLogStatement"/>
