@@ -18,7 +18,3 @@ dependencies {
 
     runtimeOnly 'org.postgresql:postgresql'
 }
-
-bootJar {
-    enabled = false
-}
