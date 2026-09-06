@@ -14,10 +14,22 @@ allprojects {
 
 subprojects {
     apply plugin: 'java-library'
+    apply plugin: 'checkstyle'
+    apply plugin: 'pmd'
 
     java {
         toolchain {
             languageVersion = JavaLanguageVersion.of(25)
         }
+    }
+
+    checkstyle {
+        configFile = rootProject.file('config/checkstyle/checkstyle.xml')
+        maxWarnings = 0
+    }
+
+    pmd {
+        ruleSets = []
+        ruleSetFiles = files("${rootDir}/config/pmd/pmd.xml")
     }
 }
