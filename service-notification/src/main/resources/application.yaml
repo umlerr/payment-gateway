@@ -13,7 +13,7 @@ spring:
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
     consumer:
-      group-id: notification-group
+      group-id: notification-service
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
@@ -23,3 +23,5 @@ server:
   servlet:
     context-path: /api/notification/v1
 
+app:
+  payment-topic: ${PAYMENT_TOPIC:payments.events.v1}
