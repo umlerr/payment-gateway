@@ -29,7 +29,7 @@ public class PaymentController {
         @RequestHeader("Idempotency-Key") String idempotencyKey,
         @Valid @RequestBody PaymentCreateRequest request) {
         PaymentCreateResult result = paymentService.create(idempotencyKey, request);
-        HttpStatus status = result.created() ? HttpStatus.CREATED : HttpStatus.OK;
+        HttpStatus status = result.isNew() ? HttpStatus.CREATED : HttpStatus.OK;
         return ResponseEntity.status(status).body(result.payment());
     }
 

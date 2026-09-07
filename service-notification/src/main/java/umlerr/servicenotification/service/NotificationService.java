@@ -8,7 +8,6 @@ import umlerr.common.enums.PaymentMethod;
 import umlerr.common.event.PaymentEvent;
 import umlerr.servicenotification.dto.NotificationResponse;
 import umlerr.servicenotification.enums.NotificationChannel;
-import umlerr.servicenotification.enums.NotificationStatus;
 import umlerr.servicenotification.model.Notification;
 import umlerr.servicenotification.repository.NotificationRepository;
 
@@ -20,6 +19,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Slf4j
 public class NotificationService {
+
+    private static final String STATUS_SENT = "SENT";
 
     private final NotificationRepository notificationRepository;
 
@@ -49,13 +50,13 @@ public class NotificationService {
     @Transactional
     public void process(PaymentEvent event) {
         NotificationChannel channel = channelFor(event.method());
-        sendMock(channel, event);
+        log.info("mock send via {} to {}: payment {} {}", channel, event.userId(), event.paymentId(), event.type());
         notificationRepository.save(Notification.builder()
             .paymentId(event.paymentId())
             .eventType(event.type().name())
             .channel(channel.name())
             .recipient(event.userId())
-            .status(NotificationStatus.SENT.name())
+            .status(STATUS_SENT)
             .payload("")
             .createdAt(LocalDateTime.now())
             .build());
@@ -67,9 +68,5 @@ public class NotificationService {
             case SBP -> NotificationChannel.SMS;
             case TRANSFER -> NotificationChannel.EMAIL;
         };
-    }
-
-    private void sendMock(NotificationChannel channel, PaymentEvent event) {
-        log.info("mock send via {} to {}: payment {} {}", channel, event.userId(), event.paymentId(), event.type());
     }
 }
