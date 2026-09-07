@@ -77,7 +77,6 @@ class PaymentProjectionServiceTest {
             BigDecimal.valueOf(100.50),
             "USD",
             PaymentMethod.CARD,
-            null,
             Instant.now()
         );
     }

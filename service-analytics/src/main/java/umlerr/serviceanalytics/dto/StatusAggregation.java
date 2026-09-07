@@ -1,4 +1,6 @@
 package umlerr.serviceanalytics.dto;
 
-public record StatusAggregation(String status, long count, java.math.BigDecimal totalAmount) {
+import java.math.BigDecimal;
+
+public record StatusAggregation(String status, long count, BigDecimal totalAmount) {
 }

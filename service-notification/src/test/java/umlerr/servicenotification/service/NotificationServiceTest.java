@@ -85,7 +85,6 @@ class NotificationServiceTest {
             BigDecimal.valueOf(100.50),
             "USD",
             method,
-            null,
             Instant.now()
         );
     }

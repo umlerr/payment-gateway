@@ -58,7 +58,7 @@ class PaymentServiceTest {
 
         PaymentCreateResult result = paymentService.create("key-1", request);
 
-        assertThat(result.created()).isTrue();
+        assertThat(result.isNew()).isTrue();
         assertThat(result.payment().getStatus()).isEqualTo(PaymentStatus.CREATED);
         verify(paymentEventPublisher).publishCreated(any(Payment.class));
     }
@@ -70,7 +70,7 @@ class PaymentServiceTest {
 
         PaymentCreateResult result = paymentService.create("key-1", request());
 
-        assertThat(result.created()).isFalse();
+        assertThat(result.isNew()).isFalse();
         verify(paymentEventPublisher, never()).publishCreated(any(Payment.class));
     }
 

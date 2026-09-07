@@ -56,11 +56,11 @@ class PaymentServiceIntegrationTest {
             .build();
 
         PaymentCreateResult first = paymentService.create("it-key-1", request);
-        assertThat(first.created()).isTrue();
+        assertThat(first.isNew()).isTrue();
         assertThat(first.payment().getStatus().name()).isEqualTo("CREATED");
 
         PaymentCreateResult second = paymentService.create("it-key-1", request);
-        assertThat(second.created()).isFalse();
+        assertThat(second.isNew()).isFalse();
         assertThat(second.payment().getId()).isEqualTo(first.payment().getId());
     }
 }

@@ -12,7 +12,6 @@ public record PaymentEvent(
     BigDecimal amount,
     String currency,
     PaymentMethod method,
-    String reason,
     Instant occurredAt
 ) {
 }

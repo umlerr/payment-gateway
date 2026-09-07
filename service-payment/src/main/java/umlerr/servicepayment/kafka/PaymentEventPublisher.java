@@ -24,19 +24,7 @@ public class PaymentEventPublisher {
     private String topic;
 
     public void publishCreated(Payment payment) {
-        PaymentEvent event = new PaymentEvent(
-            PaymentEventType.PAYMENT_CREATED,
-            payment.getId(),
-            payment.getUserId(),
-            payment.getAmount(),
-            payment.getCurrency(),
-            payment.getMethod(),
-            null,
-            Instant.now()
-        );
-        String json = objectMapper.writeValueAsString(event);
-        kafkaTemplate.send(topic, payment.getId().toString(), json);
-        log.info("PAYMENT_CREATED published for payment {}", payment.getId());
+        publish(payment, PaymentEventType.PAYMENT_CREATED);
     }
 
     public void publishCompleted(Payment payment) {
@@ -55,7 +43,6 @@ public class PaymentEventPublisher {
             payment.getAmount(),
             payment.getCurrency(),
             payment.getMethod(),
-            payment.getFailureReason(),
             Instant.now()
         );
         String json = objectMapper.writeValueAsString(event);

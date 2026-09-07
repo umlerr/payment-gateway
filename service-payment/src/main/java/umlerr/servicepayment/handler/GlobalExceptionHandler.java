@@ -1,6 +1,7 @@
 package umlerr.servicepayment.handler;
 
 import jakarta.validation.ConstraintViolationException;
+import java.time.LocalDateTime;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -8,7 +9,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.ServletWebRequest;
 import umlerr.servicepayment.dto.ErrorResponse;
-import umlerr.servicepayment.exception.ConflictException;
 import umlerr.servicepayment.exception.NotFoundException;
 
 import java.util.LinkedHashMap;
@@ -20,11 +20,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ErrorResponse> handleNotFound(NotFoundException e, ServletWebRequest request) {
         return build(HttpStatus.NOT_FOUND, "NOT_FOUND", e.getMessage(), request, null);
-    }
-
-    @ExceptionHandler(ConflictException.class)
-    public ResponseEntity<ErrorResponse> handleConflict(ConflictException e, ServletWebRequest request) {
-        return build(HttpStatus.CONFLICT, "CONFLICT", e.getMessage(), request, null);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -50,7 +45,7 @@ public class GlobalExceptionHandler {
             .code(code)
             .message(message)
             .path(request.getRequest().getRequestURI())
-            .timestamp(java.time.LocalDateTime.now())
+            .timestamp(LocalDateTime.now())
             .details(details)
             .build();
         return ResponseEntity.status(status).body(body);
