@@ -8,5 +8,6 @@
     <rule ref="category/java/bestpractices.xml">
         <exclude name="AvoidReassigningParameters"/>
         <exclude name="GuardLogStatement"/>
+        <exclude name="UnitTestContainsTooManyAsserts"/>
     </rule>
 </ruleset>
