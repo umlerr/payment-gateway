@@ -1,5 +1,11 @@
 # payment-gateway
 
+![Java](https://img.shields.io/badge/Java-25-orange)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.1-6DB33F)
+![Gradle](https://img.shields.io/badge/Gradle-9.7-02303A)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-18-4169E1)
+![Kafka](https://img.shields.io/badge/Kafka-4.0-231F20)
+
 Пет-проект: платежный шлюз на микросервисах. Платеж проходит статусы
 CREATED -> PROCESSING -> COMPLETED/FAILED, события уходят в Kafka.
 
@@ -100,7 +106,11 @@ docker exec -it postgres-analytics psql -U postgres -d analytics_db -c "select *
 
 ## Разработка
 
-- сборка и линтеры: `./gradlew build`
+- сборка, линтеры и тесты: `./gradlew build`
+- юнит-тесты сервисов и интеграционный тест
+  (`PaymentServiceIntegrationTest`, Testcontainers) входят в `build`;
+  e2e-тест `PaymentE2ETest` требует поднятых сервисов и запускается по тегу:
+  `./gradlew :service-payment:test --tests '*PaymentE2ETest'`
 - ветки: feature/*, fix/*, chore/* от master, слияние через PR
 - ключи/пароли задаются через переменные окружения (см. application.yaml),
   для локального запуска работают значения по умолчанию
